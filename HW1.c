@@ -44,7 +44,7 @@ void execute()
     switch(ir.op)
     {
     case 1: //LIT
-        sp = sp+1;
+        sp = sp - 1;
         stack[sp] = ir.m;
 	break;
 
