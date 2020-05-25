@@ -226,6 +226,26 @@ void execute()
 }
 
 
+void readInput(char in[], char out[])
+{
+    
+    int i = 0, x = 0;
+    FILE *fp;
+    fp = fopen("input.txt", "r");
+    
+    if (fp == NULL)
+    {
+        
+        printf("Error opening file");
+    }
+    fscanf(fp, "%d%d%d", &code[i].op, &code[i].l, &code[i].m);
+    
+    
+}
+
+
+
+
 
 
 
