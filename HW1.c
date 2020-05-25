@@ -46,7 +46,7 @@ void execute()
     case 1: //LIT
         sp = sp+1;
         stack[sp] = ir.m;
-
+	break;
 
     case 2: //OPR, so m must be evaluated.
         switch(ir.m)
