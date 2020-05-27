@@ -61,6 +61,11 @@ void execute()
                 sp = bp+1;
                 pc = stack[sp - 4];
                 bp = stack[sp - 3];
+                if(sp == 1000){
+						haltflag = 1;
+					}
+                arBreak[ars--] = 0;
+
                 break;
 
             }
@@ -161,14 +166,14 @@ void execute()
         case 4:  // STO - take the value from the top of the stack and store it at location M from L levels up.
             {
                 int l = ir.l;
-                int b;
+                int s = bp;
                 while (l>0)
                 {
 
-                    b = stack[b-1];
+                    s = stack[s-1];
                     l--;
                 }
-                stack[base(l, bp) - ir.m] = stack[sp];
+                stack[base(l, s) - ir.m] = stack[sp];
                 sp = sp + 1;
 
                 break;
@@ -204,26 +209,28 @@ void execute()
                 sp = sp +1;
                 break;
             }
-        case 9: //SIO
+        case 9:
+            switch(ir.m) {
+                case 1: //SIO
             {
                 printf("%d", &stack[sp]);
                 sp=sp+1;
                 break;
 
             }
-        case 10: //SIO 0, 2
+        case 2: //SIO 0, 2
             {
 
                 sp=sp-1;
                 scanf("%d", &stack[sp]);
                 break;
             }
-        case 11: // SIO 0, 3
+        case 3: // SIO 0, 3
             {
 
-                haltflag=0;
+                haltflag=1;
                 break;
-            }
+            }}
 
 
 
@@ -243,7 +250,10 @@ char *getOp(struct instruction x){
 		switch(x.m){
 
 			case 0:
-			return "RET";
+			    if(sp==34){
+						return "SIO";
+					}
+			return "OPR";
 			case 1:
 			return "NEG";
 			case 2:
@@ -355,7 +365,7 @@ void WriteToOutput(int status){
 		break;
 
 		//write our formatted stack
-		case 3: for(i = bp; i >=sp; i--){
+		case 3: for(i = 999; i >=sp; i--){
 
 			//dertermine if we need to print an activation record bar
 			if(numAr < ars && i == arBreak[numAr] && i != 0){
