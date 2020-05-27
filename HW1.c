@@ -11,14 +11,17 @@ struct instruction
   int l; // lexicographical level
   int m; // depends on opcode.
 };
-int code[MAX_CODE_LENGTH];
-int stack[MAX_DATA_STACK_HEIGHT];
+struct instruction code[MAX_CODE_LENGTH];
+int stack[MAX_DATA_STACK_HEIGHT] = {0};
 
-struct instruction ir[10000];
+struct instruction ir;
 int sp = MAX_DATA_STACK_HEIGHT; //stack pointer
-int bp = sp - 1;  //base pointer
+int bp = 999;  //base pointer
 int pc = 0; //program counter
-int haltflag;
+int haltflag = 0;
+int ars = 0;
+int prev=0;
+int arBreak[2000] = {0};
 int base(int l, int base){
 
 	int b1; //find base L levels down
@@ -34,7 +37,8 @@ int base(int l, int base){
 
 void fetch()
 {
-    ir = code[pc]; // instruction goes into the instruction register.
+    ir = code[pc];
+    prev=pc;  // instruction goes into the instruction register.
     pc = pc + 1; //incrementing the program counter
 
 }
@@ -151,7 +155,7 @@ void execute()
                     l--;
                 }
                 sp = sp - 1;
-                stack[sp] = stack[base(l, b) - ir.m];
+                stack[sp] = stack[base(l, bp) - ir.m];
                 break;
             }
         case 4:  // STO - take the value from the top of the stack and store it at location M from L levels up.
@@ -164,7 +168,7 @@ void execute()
                     b = stack[b-1];
                     l--;
                 }
-                stack[base(l, b) - ir.m] = stack[sp];
+                stack[base(l, bp) - ir.m] = stack[sp];
                 sp = sp + 1;
 
                 break;
@@ -172,12 +176,13 @@ void execute()
             }
         case 5: // CALL at M
             {
-                stack[sp-1] = 0;
-                stack[sp-2] = base(ir.l, bp);
-                stack[sp-3] = bp;
-                stack[sp-4] = pc;
-                bp = sp-1;
-                pc = ir.m;
+                stack[sp - 1] = 0; // space to return value
+                stack[sp-2] = base(ir.l, bp); // Static Link
+                stack[sp-3] = bp; //Dynamic Link
+                stack[sp-4] = pc; // Return Address
+               bp = sp - 1;
+               pc = ir.m;
+               arBreak[ars++] = bp;
                 break;
             }
         case 6: // INC
@@ -224,27 +229,180 @@ void execute()
 
 
 }
+}
+char *getOp(struct instruction x){
 
 
-void readInput(char in[], char out[])
-{
-    
-    int i = 0, x = 0;
-    FILE *fp;
-    fp = fopen("input.txt", "r");
-    
-    if (fp == NULL)
-    {
-        
-        printf("Error opening file");
-    }
-    fscanf(fp, "%d%d%d", &code[i].op, &code[i].l, &code[i].m);
-    
-    
+	switch(x.op){
+
+		case 1:
+		return "LIT";
+
+		//OPR
+		case 2:
+		switch(x.m){
+
+			case 0:
+			return "RET";
+			case 1:
+			return "NEG";
+			case 2:
+			return "ADD";
+			case 3:
+			return "SUB";
+			case 4:
+			return "MUL";
+			case 5:
+			return "DIV";
+			case 6:
+			return "ODD";
+			case 7:
+			return "MOD";
+			case 8:
+			return "EQL";
+			case 9:
+			return "NEQ";
+			case 10:
+			return "LSS";
+			case 11:
+			return "LEQ";
+			case 12:
+			return "GTR";
+			case 13:
+			return "GEQ";
+		}
+
+		case 3:
+		return "LOD";
+		case 4:
+		return "STO";
+		case 5:
+		return "CAL";
+		case 6:
+		return "INC";
+		case 7:
+		return "JMP";
+		case 8:
+		return "JPC";
+		case 9:
+		return "SIO";
+		case 10:
+		return "SIO";
+		case 11:
+        return "SIO";
+		default: return "";
+	}
+}
+
+
+void RWInput(char in[], char out[]){
+
+	int i = 0, x = 0;
+
+	FILE *fp = fopen(in, "r");
+
+	if(fp == NULL){
+		printf("ERROR OPENING FILE %s!!\n", in);
+	}
+
+	//read in our initial instruction
+	fscanf(fp, "%d%d%d", &code[i].op, &code[i].l, &code[i].m);
+
+	//read in all additional instructions
+	while(!feof(fp)){
+		i++;
+		fscanf(fp, "%d%d%d", &code[i].op, &code[i].l, &code[i].m);
+	}
+
+	fclose(fp);
+
+
+	fp = fopen(out, "w");
+
+	if(fp == NULL){
+		printf("ERROR OPENING FILE %s!!\n", out);
+	}
+
+	//format and output line headers
+	fprintf(fp, "%-5s  %-5s%-5s%-5s\n", "Line", "OP", "L", "M");
+
+	//print out our correctly formatted instructions
+	for(x = 0; x < i; x++){
+		char op[4];
+		strcpy(op, getOp(code[x]));
+		fprintf(fp, "%4d  %-5s %-5d%-5d\n", x, op, code[x].l, code[x].m);
+	}
+	fprintf(fp, "\n\n");
+	fprintf(fp,"                    %-5s%-5s%-5s%s\n", "pc", "bp", "sp", "stack");
+}
+
+
+void WriteToOutput(int status){
+
+	int i=0, numAr = 0;
+	char op[4];
+	strcpy(op, getOp(ir));
+
+	//determine what we need to write
+	switch(status){
+
+		//write the instruction
+		case 1: printf("%2d   %-5s%-5d%-5d", prev, op, ir.l, ir.m);
+		break;
+
+		//write the pointers
+		case 2: printf("%-5d%-5d%-5d", pc, bp, sp);
+		break;
+
+		//write our formatted stack
+		case 3: for(i = bp; i >=sp; i--){
+
+			//dertermine if we need to print an activation record bar
+			if(numAr < ars && i == arBreak[numAr] && i != 0){
+				numAr++;
+				printf( "| ");
+			}
+
+			//print our stack content
+			printf( " %d ", stack[i]);
+		}
+		printf("\n");
+		break;
+	}
 }
 
 
 
+
+void Run(){
+	//if(fp == NULL){
+	//	printf("ERROR OPENING FILE %s!!\n", "stacktrace.txt");
+	//}
+
+	//print our initial values
+	printf("Initial Values      %-5d%-5d%-5d\n", 0,999,1000);
+
+	//run each instruction until we get to the halt condition
+	while(!haltflag){
+
+		//get instruction
+		fetch();
+
+		//write the instruction
+		WriteToOutput(1);
+
+		//ecevute the instruction
+		execute();
+
+		//write the pointers
+		WriteToOutput(2);
+
+		//write the stack
+		WriteToOutput(3);
+	}
+
+	//fclose(fp);
+}
 
 
 
@@ -268,6 +426,9 @@ void readInput(char in[], char out[])
 
 int main()
 {
+    RWInput("input.txt","output.txt");
+    Run();
+
 
     return 0;
 }
