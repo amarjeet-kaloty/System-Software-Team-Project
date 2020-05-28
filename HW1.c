@@ -209,7 +209,7 @@ void execute()
                 sp = sp +1;
                 break;
             }
-        case 9:
+        case 11:
             switch(ir.m) {
                 case 1: //SIO
             {
