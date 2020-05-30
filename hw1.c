@@ -13,9 +13,10 @@ typedef struct instruction{
 
 //functions declarations
 char* getOpcode(instruction x);
-void WriteToOutput(int x);
 int base(int x, int base);
 void execute();
+void fetch();
+void writeToOutput(int status);
 
 instruction code[MAX_CODE_LENGTH];
 int stack[MAX_DATA_STACK_HEIGHT] = {0};
@@ -64,215 +65,215 @@ int main(){
 		fprintf(fp, "%4d  %-5s %-5d%-5d\n", x, op, code[x].l, code[x].m);
 	}
 	fprintf(fp, "\n\n");
-
+	printf("                    %-5s%-5s%-6s%s\n", "pc", "bp", "sp", "stack");
 	printf("Initial Values      %-5d%-5d%-5d\n", 0,999,1000);
 
-	while(!0){
-		
+	while(!halt){
+
 		//Fetch
 		ir = code[pc];
-    	prev = pc;  // instruction goes into the instruction register.
+    	prev=pc;  // instruction goes into the instruction register.
     	pc = pc + 1; //incrementing the program counter
 
-		//write the instruction
-		WriteToOutput(1);
-		
-		execute();
+		//Print
+		writeToOutput(1);
 
-		WriteToOuput(2);
+		//Execute
+		switch(ir.op){
+			case 1: //LIT
+				sp = sp - 1;
+				stack[sp] = ir.m;
+			break;
 
-		WriteToOutput(3);
+			case 2: //OPR, so m must be evaluated.
+				switch(ir.m)
+				{
+
+				case 0: //RET
+					{
+						sp = bp+1;
+						pc = stack[sp - 4];
+						bp = stack[sp - 3];
+						if(sp == 1000){
+								halt = 1;
+							}
+						arBreak[ars--] = 0;
+
+						break;
+
+					}
+				case 1: // NEG
+					{
+						-stack[sp];
+						break;
+					}
+				case 2: // ADD
+					{
+						sp = sp+1;
+						stack[sp] = stack[sp] + stack[sp-1];
+						break;
+					}
+				case 3: // SUB
+					{
+						sp = sp+1;
+						stack[sp]=stack[sp]-stack[sp-1];
+						break;
+
+					}
+				case 4: //MUL
+					{
+						sp=sp+1;
+						stack[sp]=stack[sp]*stack[sp-1];
+						break;
+					}
+				case 5: // DIV
+					{
+						sp=sp+1;
+						stack[sp]=stack[sp]/stack[sp-1];
+						break;
+					}
+				case 6: // ODD
+					{
+						stack[sp] = stack[sp] % 2;
+						break;
+					}
+				case 7: // MOD
+					{
+						sp=sp+1;
+						stack[sp]=stack[sp] % stack[sp-1];
+						break;
+					}
+				case 8: //EQL
+					{
+						sp=sp+1;
+						stack[sp] = ((stack[sp] == stack[sp-1]) ? 1 : 0);
+						break;
+					}
+				case 9: //NEQ
+					{
+						sp=sp+1;
+						stack[sp] = ((stack[sp] != stack[sp-1]) ? 1 : 0);
+						break;
+					}
+				case 10: //LSS
+					{
+						sp=sp+1;
+						stack[sp] = ((stack[sp] < stack[sp-1]) ? 1 : 0);
+						break;
+					}
+				case 11: //LEQ
+					{
+						sp=sp+1;
+						stack[sp] = ((stack[sp] <= stack[sp-1]) ? 1 : 0);
+						break;
+					}
+				case 12: // GTR
+					{
+						sp=sp+1;
+						stack[sp] = ((stack[sp] > stack[sp-1]) ? 1 : 0);
+						break;
+					}
+				case 13: //GEQ
+					{
+						sp=sp+1;
+						stack[sp] = ((stack[sp] >= stack[sp-1]) ? 1 : 0);
+						break;
+					}
+				}
+				break;
+
+				case 3: // LOD, this should load the value from location M from L levels up and push it to the top.
+					{
+						int l = ir.l;
+						int b;
+						while (l>0)
+						{
+
+							b = stack[b-1];
+							l--;
+						}
+						sp = sp - 1;
+						stack[sp] = stack[base(l, bp) - ir.m];
+						break;
+					}
+				case 4:  // STO - take the value from the top of the stack and store it at location M from L levels up.
+					{
+						int l = ir.l;
+						int s = bp;
+						while (l>0)
+						{
+
+							s = stack[s-1];
+							l--;
+						}
+						stack[base(l, s) - ir.m] = stack[sp];
+						sp = sp + 1;
+
+						break;
+
+					}
+				case 5: // CALL at M
+					{
+						stack[sp - 1] = 0; // space to return value
+						stack[sp-2] = base(ir.l, bp); // Static Link
+						stack[sp-3] = bp; //Dynamic Link
+						stack[sp-4] = pc; // Return Address
+					bp = sp - 1;
+					pc = ir.m;
+					arBreak[ars++] = bp;
+						break;
+					}
+				case 6: // INC
+					{
+						sp = sp - ir.m;
+						break;
+					}
+				case 7: // JMP
+					{
+						pc = ir.m;
+						break;
+					}
+				case 8: // JPC
+					{
+						if (stack[sp] == 0)
+						{
+							pc = ir.m;
+						}
+						sp = sp +1;
+						break;
+					}
+				case 9:
+					switch(ir.m) {
+						case 1: //SIO
+					{
+						printf("%d", &stack[sp]);
+						sp=sp+1;
+						break;
+					}
+				case 2: //SIO 0, 2
+					{
+						sp=sp-1;
+						scanf("%d", &stack[sp]);
+						break;
+					}
+				case 3: // SIO 0, 3
+					{
+
+						halt=1;
+						break;
+					}
+				}
+			}
+
+		//write the pointers
+		writeToOutput(2);
+
+		//write the stack
+		writeToOutput(3);
 	}
 	return 0;
 }
 
-void execute(){
-    switch(ir.op){
-    case 1: //LIT
-        sp = sp - 1;
-        stack[sp] = ir.m;
-	break;
-
-    case 2: //OPR, so m must be evaluated.
-        switch(ir.m)
-        {
-
-        case 0: //RET
-            {
-                sp = bp+1;
-                pc = stack[sp - 4];
-                bp = stack[sp - 3];
-                if(sp == 1000){
-						halt = 1;
-					}
-                arBreak[ars--] = 0;
-
-                break;
-
-            }
-        case 1: // NEG
-            {
-                -stack[sp];
-                break;
-            }
-        case 2: // ADD
-            {
-                sp = sp+1;
-                stack[sp] = stack[sp] + stack[sp-1];
-                break;
-            }
-        case 3: // SUB
-            {
-                sp = sp+1;
-                stack[sp]=stack[sp]-stack[sp-1];
-                break;
-
-            }
-        case 4: //MUL
-            {
-                sp=sp+1;
-                stack[sp]=stack[sp]*stack[sp-1];
-                break;
-            }
-        case 5: // DIV
-            {
-                sp=sp+1;
-                stack[sp]=stack[sp]/stack[sp-1];
-                break;
-            }
-        case 6: // ODD
-            {
-                stack[sp] = stack[sp] % 2;
-                break;
-            }
-        case 7: // MOD
-            {
-                sp=sp+1;
-                stack[sp]=stack[sp] % stack[sp-1];
-                break;
-            }
-        case 8: //EQL
-            {
-                sp=sp+1;
-                stack[sp] = ((stack[sp] == stack[sp-1]) ? 1 : 0);
-                break;
-            }
-        case 9: //NEQ
-            {
-                sp=sp+1;
-                stack[sp] = ((stack[sp] != stack[sp-1]) ? 1 : 0);
-                break;
-            }
-        case 10: //LSS
-            {
-                sp=sp+1;
-                stack[sp] = ((stack[sp] < stack[sp-1]) ? 1 : 0);
-                break;
-            }
-        case 11: //LEQ
-            {
-                sp=sp+1;
-                stack[sp] = ((stack[sp] <= stack[sp-1]) ? 1 : 0);
-                break;
-            }
-        case 12: // GTR
-            {
-                sp=sp+1;
-                stack[sp] = ((stack[sp] > stack[sp-1]) ? 1 : 0);
-                break;
-            }
-        case 13: //GEQ
-            {
-                sp=sp+1;
-                stack[sp] = ((stack[sp] >= stack[sp-1]) ? 1 : 0);
-                break;
-            }
-        }
-        break;
-
-        case 3: // LOD, this should load the value from location M from L levels up and push it to the top.
-            {
-                int l = ir.l;
-                int b;
-                while (l>0)
-                {
-
-                    b = stack[b-1];
-                    l--;
-                }
-                sp = sp - 1;
-                stack[sp] = stack[base(l, bp) - ir.m];
-                break;
-            }
-        case 4:  // STO - take the value from the top of the stack and store it at location M from L levels up.
-            {
-                int l = ir.l;
-                int s = bp;
-                while (l>0)
-                {
-
-                    s = stack[s-1];
-                    l--;
-                }
-                stack[base(l, s) - ir.m] = stack[sp];
-                sp = sp + 1;
-
-                break;
-
-            }
-        case 5: // CALL at M
-            {
-                stack[sp - 1] = 0; // space to return value
-                stack[sp-2] = base(ir.l, bp); // Static Link
-                stack[sp-3] = bp; //Dynamic Link
-                stack[sp-4] = pc; // Return Address
-               bp = sp - 1;
-               pc = ir.m;
-               arBreak[ars++] = bp;
-                break;
-            }
-        case 6: // INC
-            {
-                sp = sp - ir.m;
-                break;
-            }
-        case 7: // JMP
-            {
-                pc = ir.m;
-                break;
-            }
-        case 8: // JPC
-            {
-                if (stack[sp] == 0)
-                {
-                    pc = ir.m;
-                }
-                sp = sp +1;
-                break;
-            }
-        case 9:
-            switch(ir.m) {
-                case 1: //SIO
-            {
-                printf("%d", &stack[sp]);
-                sp=sp+1;
-                break;
-            }
-        case 2: //SIO 0, 2
-            {
-                sp=sp-1;
-                scanf("%d", &stack[sp]);
-                break;
-            }
-        case 3: // SIO 0, 3
-            {
-
-                halt=1;
-                break;
-            }
-        }
-    }
-}
 
 int base(int l, int base){
 
@@ -285,7 +286,7 @@ int base(int l, int base){
 	return b1;
 }
 
-void WriteToOutput(int status){
+void writeToOutput(int status){
 
 	int i=0, numAr = 0;
 	char op[4];
@@ -380,3 +381,4 @@ char* getOpcode(instruction x){
 		default: return "";
 	}
 }
+
