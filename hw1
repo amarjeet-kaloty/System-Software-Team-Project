@@ -65,7 +65,7 @@ int main(){
 
 
 
-	printf("%-5s%-5s%-6s%s\n", "pc", "bp", "sp", "stack");
+	printf("                    %-5s%-5s%-6s%s\n", "pc", "bp", "sp", "stack");
 	printf("Initial Values      %-5d%-5d%-5d\n", 0,999,1000);
 
 	while(!halt){
