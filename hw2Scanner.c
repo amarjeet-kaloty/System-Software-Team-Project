@@ -380,8 +380,9 @@ void main(){
                 if ((inputArray[j] >= 'A' && inputArray[j] <= 'Z') ||
                     (inputArray[j] >= 'a' && inputArray[j] <= 'z'))
                 {
-                    printf("\nError: Invalid Number!");
-                    exit(EXIT_FAILURE);
+                    // printf("\nError: Invalid Number!");
+                    // exit(EXIT_FAILURE);
+                    break;
                 }
             }
 
@@ -426,24 +427,24 @@ void main(){
 	int num_count= 0;
 	int identifiers_cnt= 0;
     printf("Lexeme Table:\n");
-    printf("Lexeme   Token Type\n");
+    printf("Lexeme      Token Type\n");
     char* lexeme = (char*)malloc(100);
     //Print Lexeme Table and Tokens
 	for (i=0; i< token_cnt; i++)
 	{
 		if (tokens[i]== numbersym)
 		{
-			printf("%d\t\t\t%d\n",numbers[num_count], tokens[i]);
+			printf("%d. %d\t\t\t%d\n",i, numbers[num_count], tokens[i]);
 			num_count++;
 		}
 		else if (tokens[i]== identsym)
 		{
-			printf("%s\t\t\t%d\n", identifiers_list[identifiers_cnt], tokens[i]);
+			printf("%d. %s\t\t\t%d\n",i, identifiers_list[identifiers_cnt], tokens[i]);
             identifiers_cnt++;
 		}
 		else
         {   strcpy(lexeme, tokenToCharacter(tokens[i]));
-			printf("%s\t\t\t%d\n", lexeme, tokens[i]);
+			printf("%d. %s\t\t\t%d\n",i, lexeme, tokens[i]);
         }
 	}
 
@@ -473,7 +474,6 @@ void main(){
 		}
 		else if (tokens[i]== identsym)
 		{
-		    //Check if we already printed this out.
 		    for(int j=0; j<cnt; j++){
                 printf("%d %s ", tokens[i], strcpy(temp_id, identifiers_list[identifiers_cnt]));
                 cnt++;
