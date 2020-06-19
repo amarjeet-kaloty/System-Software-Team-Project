@@ -402,14 +402,7 @@ void main(){
                     (inputArray[j] == '\t'))
                     break;
 
-                // //If an identifier starts with a number and if number has letters in it
-                // if ((inputArray[j] >= 'A' && inputArray[j] <= 'Z') ||
-                //     (inputArray[j] >= 'a' && inputArray[j] <= 'z'))
-                // {
-                //     // printf("\nError: Invalid Number!");
-                //     // exit(EXIT_FAILURE);
-                //     break;
-                // }
+
             }
 
              //Set j to where we were from i.
