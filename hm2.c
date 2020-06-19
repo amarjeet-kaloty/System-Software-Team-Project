@@ -77,11 +77,16 @@ void main(){
     for (i=0; i < input_length; i++){
         
         //Check of invalid identifier
-        if (isdigit(inputArray[i]) == 1 && isalpha(inputArray[i+1]) != 0)
+        for(int check = 0; check < input_length; check++)
+        {
+
+
+        if (isdigit(inputArray[check]) == 1 && isalpha(inputArray[check+1]) != 0)
         {
             printf("\nError! Number then Letter Appeared which is invalid.");
             exit(EXIT_FAILURE);
         }
+}
 
         if( inputArray[i] == '@' || inputArray[i] == '~' || inputArray[i] == '`' || inputArray[i] == '#'
             || inputArray[i] == '#' || inputArray[i] ==  '$' || inputArray[i] == '%'|| inputArray[i] == '^'
