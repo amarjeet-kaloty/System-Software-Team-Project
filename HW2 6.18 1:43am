@@ -73,7 +73,7 @@ void main(){
       if (isdigit(inputArray[i]) == 1 && isalpha(inputArray[i+1]) != 0)
        {
 
-     printf("\nError! Invalid character");
+     printf("\nError! Number then Letter Appeared which is invalid.");
             exit(EXIT_FAILURE);
        }
 
@@ -81,7 +81,7 @@ void main(){
 
         if( inputArray[i] == '@' || inputArray[i] == '~' || inputArray[i] == '`' || inputArray[i] == '#'
            || inputArray[i] == '#' || inputArray[i] ==  '$' || inputArray[i] == '%'|| inputArray[i] == '^'
-           || inputArray[i] == '&' || inputArray[i] == '-' || inputArray[i] == '_' || inputArray[i] == '?'
+           || inputArray[i] == '&' || inputArray[i] == '_' || inputArray[i] == '?'
            || inputArray[i] == '"' || inputArray[i] == '[' || inputArray[i] == ']' ){
             printf("\nError! Invalid character");
             exit(EXIT_FAILURE);
@@ -475,14 +475,6 @@ void main(){
                 k++;
                 break;
 		    }
-
-        //This part doesn nothing
-		    //if(symflag==0){
-        //        printf("%d %d ", tokens[i], numbers[k]);
-        //        cnt++;
-        //        k++;
-		    //}
-
 
 		}
 		else if (tokens[i]== identsym)
