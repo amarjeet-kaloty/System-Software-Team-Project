@@ -1,3 +1,6 @@
+//   Student Name:
+// Ashwin Jegatheesan
+// Amarjeet S Kaloty
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
