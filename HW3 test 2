@@ -1139,7 +1139,7 @@ char* Block(int v){
  	Initialize2("lexicalOutput.txt", "mcode.txt");
 
 	Get();
- 	Block(8);
+ 	Block(0);
 	if(!strcmp(token, ".")){
  		printOut();
 		fclose(fp);
