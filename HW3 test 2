@@ -1,8 +1,5 @@
 
-//Sam Wildman
-//S2878126
-//COP 3402 Spring 2015
-//Homework 4 - Tiny Compiler - With Extra Credit
+
 
 #include <stdio.h>
 #include <stdlib.h>
