@@ -1,4 +1,4 @@
 To compile: gcc Compile.c -lm
 To Run: ./a.out -l for lexical output
-To Run: ./a.out -v for Virtual output
+To Run: ./a.out -v for Virtual Code output
 To Run: ./a.out -a for Assembly Code output
