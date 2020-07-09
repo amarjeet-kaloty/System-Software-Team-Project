@@ -1,4 +1,6 @@
 
+#ifndef _Parser_
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -1080,3 +1082,4 @@ int Parser(int flag){
  	return 0;
  }
 
+#endif //_Parser_
