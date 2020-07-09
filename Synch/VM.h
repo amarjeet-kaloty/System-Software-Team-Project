@@ -2,6 +2,8 @@
 // Ashwin Jegatheesan
 // Amarjeet S Kaloty
 
+#ifndef _VM_
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -367,4 +369,6 @@ char* getOpcode(instruction x){
 		default: return "";
 	}
 }
+
+#endif //_VM_
 
