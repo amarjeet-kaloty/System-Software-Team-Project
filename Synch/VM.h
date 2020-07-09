@@ -1,7 +1,7 @@
 //   Student Name:
 // Ashwin Jegatheesan
 // Amarjeet S Kaloty
-#ifndef VM.h
+#ifndef VM
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -367,4 +367,4 @@ char* getOpcode(instruction x){
 		default: return "";
 	}
 }
-#endif VM.h
+#endif VM
