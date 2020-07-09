@@ -1,11 +1,12 @@
 
 #ifndef _Parser_
-
+#define _Parser_
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+
 
 typedef struct code_gen{
 	int op;
@@ -32,7 +33,7 @@ FILE* fp;
 symbolTable* st;
 code_gen* codegen;
 
-char* token;
+char* tokenq;
 char** input;
 int tptr = 0;
 int line = 0;
@@ -200,7 +201,7 @@ void PrintTable(symbolTable* table){
 //Initialize everything
 void Initialize2(char in[], char out[]){
 
-	int tokens = 0;
+	int tokensp = 0;
 	int i = 0;
 	char tmp;
 
@@ -208,13 +209,13 @@ void Initialize2(char in[], char out[]){
 	fp = fopen(in, "r");
 	while(!feof(fp)){
 		tmp = fgetc(fp);
-		if(tmp == ' ') tokens++;
+		if(tmp == ' ') tokensp++;
 	}
 
 	//allocate space for our input and token variable
-	token = malloc(sizeof(char*)* 12);
-	input = malloc(sizeof(char*) * tokens+2);
-	for(i = 0; i < tokens+2; i++){
+	tokenq = malloc(sizeof(char*)* 12);
+	input = malloc(sizeof(char*) * tokensp+2);
+	for(i = 0; i < tokensp+2; i++){
 		input[i] = malloc(sizeof(char) * 12);
 	}
 
@@ -222,8 +223,9 @@ void Initialize2(char in[], char out[]){
 	fp = fopen(in, "r");
 
 	//read our rokens
-	for(i = 0; i < tokens; i++){
+	for(i = 0; i < tokensp; i++){
 		fscanf(fp, "%s", input[i]);
+    
 	}
 
 	fclose(fp);
@@ -272,7 +274,9 @@ void printOut(int flag){
 	if(flag)
 		for(i=0; i<line; i++){
 			fprintf(fp, "%d %d %d\n",codegen[i].op, codegen[i].l, codegen[i].m);
+      printf("%d %d %d\n",codegen[i].op, codegen[i].l, codegen[i].m);
 		}
+    printf("\n");
 }
 
 
@@ -284,71 +288,71 @@ void Get(){
 
 	char* tmp = input[tptr++];
 
-		if(!strcmp(tmp, "1")) token = "\0";
+		if(!strcmp(tmp, "1")) tokenq = "\0";
 
-		else if(!strcmp(tmp, "2")) token = "2";
+		else if(!strcmp(tmp, "2")) tokenq = "2";
 
-		else if(!strcmp(tmp, "3")) token = "3";
+		else if(!strcmp(tmp, "3")) tokenq = "3";
 
-		else if(!strcmp(tmp, "4")) token = "+";
+		else if(!strcmp(tmp, "4")) tokenq = "+";
 
-		else if(!strcmp(tmp, "5")) token = "-";
+		else if(!strcmp(tmp, "5")) tokenq = "-";
 
-		else if(!strcmp(tmp, "6")) token = "*";
+		else if(!strcmp(tmp, "6")) tokenq = "*";
 
-		else if(!strcmp(tmp, "7")) token = "/";
+		else if(!strcmp(tmp, "7")) tokenq = "/";
 
-		else if(!strcmp(tmp, "8")) token = "odd";
+		else if(!strcmp(tmp, "8")) tokenq = "odd";
 
-		else if(!strcmp(tmp, "9")) token = "=";
+		else if(!strcmp(tmp, "9")) tokenq = "=";
 
-		else if(!strcmp(tmp, "10")) token = "<>";
+		else if(!strcmp(tmp, "10")) tokenq = "<>";
 
-		else if(!strcmp(tmp, "11")) token = "<";
+		else if(!strcmp(tmp, "11")) tokenq = "<";
 
-		else if(!strcmp(tmp, "12")) token = "<=";
+		else if(!strcmp(tmp, "12")) tokenq = "<=";
 
-		else if(!strcmp(tmp, "13")) token = ">";
+		else if(!strcmp(tmp, "13")) tokenq = ">";
 
-		else if(!strcmp(tmp, "14")) token = ">=";
+		else if(!strcmp(tmp, "14")) tokenq = ">=";
 
-		else if(!strcmp(tmp, "15")) token = "(";
+		else if(!strcmp(tmp, "15")) tokenq = "(";
 
-		else if(!strcmp(tmp, "16")) token = ")";
+		else if(!strcmp(tmp, "16")) tokenq = ")";
 
-		else if(!strcmp(tmp, "17")) token = ",";
+		else if(!strcmp(tmp, "17")) tokenq = ",";
 
-		else if(!strcmp(tmp, "18")) token = ";";
+		else if(!strcmp(tmp, "18")) tokenq = ";";
 
-		else if(!strcmp(tmp, "19")) token = ".";
+		else if(!strcmp(tmp, "19")) tokenq = ".";
 
-		else if(!strcmp(tmp, "20")) token = ":=";
+		else if(!strcmp(tmp, "20")) tokenq = ":=";
 
-		else if(!strcmp(tmp, "21")) token = "begin";
+		else if(!strcmp(tmp, "21")) tokenq = "begin";
 
-		else if(!strcmp(tmp, "22")) token = "end";
+		else if(!strcmp(tmp, "22")) tokenq = "end";
 
-		else if(!strcmp(tmp, "23")) token = "if";
+		else if(!strcmp(tmp, "23")) tokenq = "if";
 
-		else if(!strcmp(tmp, "24")) token = "then";
+		else if(!strcmp(tmp, "24")) tokenq = "then";
 
-		else if(!strcmp(tmp, "25")) token = "while";
+		else if(!strcmp(tmp, "25")) tokenq = "while";
 
-		else if(!strcmp(tmp, "26")) token = "do";
+		else if(!strcmp(tmp, "26")) tokenq = "do";
 
-		else if(!strcmp(tmp, "27")) token = "call";
+		else if(!strcmp(tmp, "27")) tokenq = "call";
 
-		else if(!strcmp(tmp, "28")) token = "const";
+		else if(!strcmp(tmp, "28")) tokenq = "const";
 
-		else if(!strcmp(tmp, "29")) token = "var";
+		else if(!strcmp(tmp, "29")) tokenq = "var";
 
-		else if(!strcmp(tmp, "30")) token = "procedure";
+		else if(!strcmp(tmp, "30")) tokenq = "procedure";
 
-		else if(!strcmp(tmp, "31")) token = "write";
+		else if(!strcmp(tmp, "31")) tokenq = "write";
 
-		else if(!strcmp(tmp, "32")) token = "read";
+		else if(!strcmp(tmp, "32")) tokenq = "read";
 
-		else if(!strcmp(tmp, "33")) token = "else";
+		else if(!strcmp(tmp, "33")) tokenq = "else";
 
 		else;
 
@@ -468,9 +472,9 @@ void Expression(){
 	int yee = 0;
 
 	//+ or - is optional at the begining of an expression
-	if(!strcmp(token, "+") || !strcmp(token, "-")){
+	if(!strcmp(tokenq, "+") || !strcmp(tokenq, "-")){
 
-		if(!strcmp(token, "-")) yee = 1;
+		if(!strcmp(tokenq, "-")) yee = 1;
 
 		sym = 1;
 		Get();
@@ -482,16 +486,16 @@ void Expression(){
 
 	//expression must have at least a single term
 	//and can be followed by +/- and more terms
-	while(sym == 0 || (!strcmp(token, "+") || !strcmp(token, "-"))){
+	while(sym == 0 || (!strcmp(tokenq, "+") || !strcmp(tokenq, "-"))){
 
 		sym = 1;
 
-		if(!strcmp(token, "+")){
+		if(!strcmp(tokenq, "+")){
 			Get();
 			Term();
 			Gen(2,0,2);
 		}
-		else if(!strcmp(token, "-")){
+		else if(!strcmp(tokenq, "-")){
 			Get();
 			Term();
 			Gen(2,0,3);
@@ -513,7 +517,7 @@ void Factor(){
 	int tmp;
 
 	//our factor is an ident
-	if(!strcmp(token, "2")){
+	if(!strcmp(tokenq, "2")){
 
 		//get the specific identifier
 		ident = input[tptr++];
@@ -546,7 +550,7 @@ void Factor(){
 	}
 
 	//our factor is a number
-	else if(!strcmp(token, "3")){
+	else if(!strcmp(tokenq, "3")){
 
 		//get the specific number and push it
 		number = atoi(input[tptr++]);
@@ -555,19 +559,19 @@ void Factor(){
 	}
 
 	//our factor is in the form ( expresson )
-	else if(!strcmp(token, "(")){
+	else if(!strcmp(tokenq, "(")){
 
 		Get();
 		Expression();
-		if(!strcmp(token, ")")) Get();
+		if(!strcmp(tokenq, ")")) Get();
 		else Error(22);
 	}
 
 
 	//call a procedure
-	else if(!strcmp(token, "call")){
+	else if(!strcmp(tokenq, "call")){
 		Get();
-		if(!strcmp(token, "2")){
+		if(!strcmp(tokenq, "2")){
 			ident = input[tptr++];
 
 			curSym = Lookup(st, ident);
@@ -602,9 +606,9 @@ void Term(){
 	Factor();
 
 	//we can have multiple factors multiplied or divided together
-	while(!strcmp(token, "*") || !strcmp(token, "/")){
+	while(!strcmp(tokenq, "*") || !strcmp(tokenq, "/")){
 
-		if(!strcmp(token, "*")) sym = 4;
+		if(!strcmp(tokenq, "*")) sym = 4;
 		else sym = 5;
 
 		Get();
@@ -619,7 +623,7 @@ void Condition(){
 	int sym;
 
 	//odd condition
-	if(!strcmp(token, "odd")){
+	if(!strcmp(tokenq, "odd")){
 		Get();
 		Expression();
 		Gen(2,0,6);
@@ -630,16 +634,16 @@ void Condition(){
 
 		//parse the expression
 		Expression();
-		if(!strcmp(token, "=") || !strcmp(token, "<>") || !strcmp(token, "<")
-			|| !strcmp(token, "<=") || !strcmp(token, ">") || !strcmp(token, ">=")){
+		if(!strcmp(tokenq, "=") || !strcmp(tokenq, "<>") || !strcmp(tokenq, "<")
+			|| !strcmp(tokenq, "<=") || !strcmp(tokenq, ">") || !strcmp(tokenq, ">=")){
 
 			//decide which rel-op we have
-			if(!strcmp(token, "=")) sym = 8;
-			else if(!strcmp(token, "<>")) sym = 9;
-			else if(!strcmp(token, "<")) sym = 10;
-			else if(!strcmp(token, "<=")) sym = 11;
-			else if(!strcmp(token, ">")) sym = 12;
-			else if(!strcmp(token, ">=")) sym = 13;
+			if(!strcmp(tokenq, "=")) sym = 8;
+			else if(!strcmp(tokenq, "<>")) sym = 9;
+			else if(!strcmp(tokenq, "<")) sym = 10;
+			else if(!strcmp(tokenq, "<=")) sym = 11;
+			else if(!strcmp(tokenq, ">")) sym = 12;
+			else if(!strcmp(tokenq, ">=")) sym = 13;
 
 
 			Get();
@@ -665,14 +669,14 @@ void Statement(){
 	symbol* curSym;
 
 	//ident
-	if(!strcmp(token, "2")){
+	if(!strcmp(tokenq, "2")){
 
 		//get the specific ident
 		ident = input[tptr++];
 
 		Get();
 		//ident := expression
-		if(!strcmp(token, ":=")) Get();
+		if(!strcmp(tokenq, ":=")) Get();
 		else Error(11);
 
 		//get our ident from the table
@@ -699,9 +703,9 @@ void Statement(){
 	}
 
 	//call a procedure
-	else if(!strcmp(token, "call")){
+	else if(!strcmp(tokenq, "call")){
 		Get();
-		if(!strcmp(token, "2")){
+		if(!strcmp(tokenq, "2")){
 			ident = input[tptr++];
 
 			curSym = Lookup(st, ident);
@@ -723,14 +727,14 @@ void Statement(){
 	}
 
 	//begin
-	else if(!strcmp(token, "begin")){
+	else if(!strcmp(tokenq, "begin")){
 		Get();
 		Statement();
-		while(!strcmp(token, ";")){
+		while(!strcmp(tokenq, ";")){
 			Get();
 			Statement();
 		}
-		if(!strcmp(token, "end")){
+		if(!strcmp(tokenq, "end")){
 			Get();
 		}
 		else{
@@ -740,37 +744,24 @@ void Statement(){
 	}
 
 	//if - then
-	else if(!strcmp(token, "if")){
+	else if(!strcmp(tokenq, "if")){
 
 		Get();
 		Condition();
-		if(!strcmp(token, "then")){
+		if(!strcmp(tokenq, "then")){
 			Get();
 			//store the line where our jump address is written for future use
 			jaddr = line;
 			Gen(8,0,0);
 			Statement();
 
-			if(!strcmp(token, ";")){
+			if(!strcmp(tokenq, ";")){
 				//update our jump addresses to the correct one
 				codegen[jaddr].m = line;
 				Get();
 			}
 
-			if(!strcmp(token, "else")){
-				jaddr2 = line;
-				Gen(7,0,0);
-				Get();
-				codegen[jaddr].m = line;
-				Statement();
-				//update our jump addresses to the correct one
-				codegen[jaddr2].m = line;
-				}
-			else{
-				codegen[jaddr].m = line;
-				token = ";";
-				tptr--;
-			}
+
 
 
 		}
@@ -778,13 +769,13 @@ void Statement(){
 	}
 
 	//while
-	else if(!strcmp(token, "while")){
+	else if(!strcmp(tokenq, "while")){
 
 		Get();
 		//store the position of the start of the loop
 		caddr = line;
 		Condition();
-		if(!strcmp(token, "do")){
+		if(!strcmp(tokenq, "do")){
 			//store the line where our jump address is written for future use
 			jaddr = line;
 			Gen(8,0,0);
@@ -799,13 +790,13 @@ void Statement(){
 	}
 
 	//read from console
-	else if(!strcmp(token, "read")){
+	else if(!strcmp(tokenq, "read")){
 
 		Gen(10,0,0);
 		Get();
 
 		//ident to store input
-		if(!strcmp(token, "2")){
+		if(!strcmp(tokenq, "2")){
 
 			//actual variable
 			ident = input[tptr++];
@@ -832,11 +823,11 @@ void Statement(){
 	}
 
 	//write to console
-	else if(!strcmp(token, "write")){
+	else if(!strcmp(tokenq, "write")){
 
 		Get();
 
-		if(!strcmp(token, "2")){
+		if(!strcmp(tokenq, "2")){
 
 			ident = input[tptr++];
 			Get();
@@ -867,12 +858,12 @@ void PList(){
 	int i;
 
 	Get();
-	if(!strcmp(token, "(")){
+	if(!strcmp(tokenq, "(")){
 		Get();
-		if(strcmp(token, ")")){
+		if(strcmp(tokenq, ")")){
 			Expression();
 			parms++;
-			while(!strcmp(token, ",")){
+			while(!strcmp(tokenq, ",")){
 				Get();
 				Expression();
 				parms++;
@@ -883,7 +874,7 @@ void PList(){
 				parms--;
 			}
 
-			if(strcmp(token, ")")){
+			if(strcmp(tokenq, ")")){
 				Error(22);
 			}
 		}
@@ -901,13 +892,13 @@ int PBlock(){
 
 	char* ident = malloc(sizeof(char*) * 12);
 
-	if(!strcmp(token, "(")){
+	if(!strcmp(tokenq, "(")){
 		Get();
-		if(!strcmp(token, ")")){
+		if(!strcmp(tokenq, ")")){
 			Get();
 			return vars;
 		}
-		if(!strcmp(token, "2")){
+		if(!strcmp(tokenq, "2")){
 
 			ident = input[tptr++];
 			tmp = Add(st, ident, 1, 0, offset++, lex+1);
@@ -916,9 +907,9 @@ int PBlock(){
 
 			Get();
 
-			while(!strcmp(token, ",")){
+			while(!strcmp(tokenq, ",")){
 				Get();
-				if(!strcmp(token, "2")){
+				if(!strcmp(tokenq, "2")){
 					ident = input[tptr++];
 					tmp = Add(st, ident, 1, 0, offset++, lex+1);
 					if(tmp == 0) vars++;
@@ -928,7 +919,7 @@ int PBlock(){
 				}
 				else Error(19);
 			}
-			if(!strcmp(token, ")")){
+			if(!strcmp(tokenq, ")")){
 				Get();
 			}
 			else{
@@ -961,11 +952,11 @@ char* Block(int v){
 	int procvars;
 
 	//store our constants
-	if(!strcmp(token, "const")){
+	if(!strcmp(tokenq, "const")){
 
 		do{
 			Get();
-			if(!strcmp(token, "2")){
+			if(!strcmp(tokenq, "2")){
 				ident = input[tptr++];
 			}
 			else{
@@ -974,9 +965,9 @@ char* Block(int v){
 
 			Get();
 
-			if(!strcmp(token, "=")){
+			if(!strcmp(tokenq, "=")){
 				Get();
-				if(!strcmp(token, "3")) number = atoi(input[tptr++]);
+				if(!strcmp(tokenq, "3")) number = atoi(input[tptr++]);
 				else Error(2);
 			}
 			else{
@@ -988,9 +979,9 @@ char* Block(int v){
 			else printf("Error inserting %d into table. Code - %d\n",number, tmp);
 			Get();
 
-		} while(!strcmp(token, ","));
+		} while(!strcmp(tokenq, ","));
 
-		if(!strcmp(token, ";")) Get();
+		if(!strcmp(tokenq, ";")) Get();
 		else {
 			Error(10);
 		}
@@ -998,11 +989,11 @@ char* Block(int v){
 
 
 	//store our variables
-	if(!strcmp(token, "var")){
+	if(!strcmp(tokenq, "var")){
 
 		do{
 			Get();
-			if(!strcmp(token, "2")){
+			if(!strcmp(tokenq, "2")){
 				ident = input[tptr++];
 			}
 			else{
@@ -1013,10 +1004,10 @@ char* Block(int v){
 			else printf("Error inserting %d into table. Code - %d\n",number, tmp);
 			Get();
 			vars++;
-		}while(!strcmp(token, ","));
+		}while(!strcmp(tokenq, ","));
 
 
-		if(!strcmp(token, ";")) Get();
+		if(!strcmp(tokenq, ";")) Get();
 		else {
 			Error(10);
 		}
@@ -1024,39 +1015,12 @@ char* Block(int v){
 
 	//allocate our stack space for our constants and variables
 	bgn = line;
-	Gen(7, 0, line);
+	//Gen(7, 0, line);
 
 
 
 	//parse all procedures
-	while(!strcmp(token, "procedure")){
-		procvars = 0;
-		offset = 4;
-		Get();
-		if(!strcmp(token, "2")){
-			ident = input[tptr++];
-			Get();
-		}
-		else{
-			Error(4);
-		}
 
-		procvars = PBlock();
-
-
-		if(!strcmp(token, ";")) Get();
-		else Error(6);
-
-		Add(st, ident, 2, 0, line, lex);
-		Add(st, "return", 1, 0, 0, lex+1);
-
-		Block(procvars);
-		if(!strcmp(token, ";")) Get();
-		else{
-			Error(10);
-		}
-		Gen(2,0,0);
-	}
 
 	codegen[bgn].m = line;
 	Gen(6, 0, vars + 4);
@@ -1064,7 +1028,7 @@ char* Block(int v){
 	Delete(st);
 	lex--;
 	Gen(11, 0, 3);
-	return token;
+	return tokenq;
 }
 
 
@@ -1073,12 +1037,13 @@ int Parser(int flag){
 	Get();
  	Block(0);
 	
-	if(!strcmp(token, ".")){
+	if(!strcmp(tokenq, ".")){
  		printOut(flag);
 		fclose(fp);
  	}
  	else Error(9);
 
+ 	return 0;
  	return 0;
  }
 
