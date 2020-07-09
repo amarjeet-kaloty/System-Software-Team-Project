@@ -2,6 +2,8 @@
 // Ashwin Jegatheesan
 // Amarjeet S Kaloty
 
+#ifndef _Parser_
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -659,3 +661,5 @@ char* tokenToCharacter(int token){
             return 0;
     }
 }
+
+#endif //_Parser_
