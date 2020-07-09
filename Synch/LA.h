@@ -3,7 +3,7 @@
 // Amarjeet S Kaloty
 
 #ifndef _LA_
-
+#define _LA_
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -50,6 +50,7 @@ void LA(int flag){
     //Open input
     inputFile = fopen("input.txt", "r");
     outputFile = fopen("lexicalOutput.txt", "w");
+   
 
     //If file not found throw an error
     if(inputFile == NULL){
@@ -476,6 +477,7 @@ void LA(int flag){
 		{
 		    for(int j=0; j<cnt; j++){
                 fprintf(outputFile, "%d %d ", tokens[i], numbers[k]);
+               
                 if(flag)
                     printf("%d %d ", tokens[i], numbers[k]);
                 cnt++;
@@ -489,6 +491,7 @@ void LA(int flag){
 		{
 		    for(int j=0; j<cnt; j++){
                 fprintf(outputFile, "%d %s ", tokens[i], strcpy(temp_id, identifiers_list[identifiers_cnt]));
+                
                 if(flag)
                     printf("%d %s ", tokens[i], strcpy(temp_id, identifiers_list[identifiers_cnt]));
                 cnt++;
@@ -498,6 +501,7 @@ void LA(int flag){
             }
 		    if(symflag==0){
                 fprintf(outputFile, "%d %s ", tokens[i], strcpy(temp_id, identifiers_list[identifiers_cnt]));
+                
                 if(flag)    
                     printf("%d %s ", tokens[i], strcpy(temp_id, identifiers_list[identifiers_cnt]));
                 cnt++;
@@ -507,14 +511,30 @@ void LA(int flag){
 		else
         {
             fprintf(outputFile, "%d ", tokens[i]);
+            
             if(flag)    
                 printf("%d ", tokens[i]);
         }
 	}
     if(flag)
 	    printf("\n\n");
-    return;
 
+
+fclose(outputFile);
+ /*FILE *fptr1, *fptr2; 
+   char c; 
+   fptr1 = fopen("lexicalOutput.txt", "r"); 
+    fptr2 = fopen("newinput.txt", "w"); 
+    c = fgetc(fptr1); 
+    while (c != EOF) 
+    { 
+        fputc(c, fptr2); 
+        c = fgetc(fptr1); 
+    } 
+    fclose(fptr1); 
+    fclose(fptr2);
+    return;
+*/
 }
 
 //This function converts a character to a token represented by an integer in enum.
