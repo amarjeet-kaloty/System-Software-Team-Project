@@ -2,7 +2,7 @@
 // Ashwin Jegatheesan
 // Amarjeet S Kaloty
 
-#ifndef _Parser_
+#ifndef _LA_
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -662,4 +662,4 @@ char* tokenToCharacter(int token){
     }
 }
 
-#endif //_Parser_
+#endif //_LA_
